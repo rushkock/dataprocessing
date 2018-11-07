@@ -166,16 +166,9 @@ def scrape_top_250(soup):
     movie_urls = []
     containers = soup.find_all("td",class_="titleColumn")
     for container in containers:
-        link = container.a['href']
-        link = "https://www.imdb.com" + link
-        #print(link)
+        link = f"https://www.imdb.com{container.a['href']}"
         movie_urls.append(link)
-    # link = f"https://www.imdb.com{containers[10].a['href']}"
-    # #print(link)
-    # movie_urls.append(link)
 
-    # YOUR SCRAPING CODE GOES HERE, ALL YOU ARE LOOKING FOR ARE THE ABSOLUTE
-    # URLS TO EACH MOVIE'S IMDB PAGE, ADD THOSE TO THE LIST movie_urls.
     return movie_urls
 
 
@@ -186,13 +179,14 @@ def scrape_movie_page(dom):
         dom: BeautifulSoup DOM instance representing the page of 1 single
             movie.
     Returns:
-        A list of strings representing the following (in order): title, year,
+        A list of strings representing the following (in order): title,
         duration, genre(s) (semicolon separated if several), director(s)
         (semicolon separated if several), writer(s) (semicolon separated if
         several), actor(s) (semicolon separated if several), rating, number
         of ratings.
     """
     movie = []
+
     # get the title
     title = dom.find("div", class_="title_wrapper")
     movie.append(title.h1.next_element)
@@ -203,7 +197,6 @@ def scrape_movie_page(dom):
 
     # get the genre
     genre = dom.find("div", class_="subtext")
-    #movie.append(genre.time.next_sibling.next_sibling.next_sibling.next_sibling.string.strip())
     genres = genre.find_all("a", href=re.compile("genres"))
     all_genres = map(lambda x: x.string.strip(), genres)
     movie.append(";".join(all_genres))
@@ -212,24 +205,21 @@ def scrape_movie_page(dom):
     credit = dom.find_all("div", class_="credit_summary_item")
 
     # get the director names
-    directors = credits(credit[0])
-    movie.append(directors)
+    movie.append(credits(credit[0]))
 
     # get the writer names
-    writers = credits(credit[1])
-    movie.append(writers)
+    movie.append(credits(credit[1]))
 
-    # get the star names
-    actors = credits(credit[2])
-    movie.append(actors)
+    # get the actor names
+    movie.append(credits(credit[2]))
 
     # get the rating
     rating = dom.find("div", class_="imdbRating")
     movie.append(rating.strong.span.string)
 
     # get the number of ratings
-    number_of_ratings = dom.find_all("div", class_="imdbRating")
-    movie.append(number_of_ratings[0].a.string)
+    number_of_ratings = dom.find("div", class_="imdbRating")
+    movie.append(number_of_ratings.a.string)
 
     return movie
 
