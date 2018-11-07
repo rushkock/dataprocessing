@@ -18,22 +18,15 @@ END_YEAR = 2018
 # Global dictionary for the data
 data_dict = {str(key): [] for key in range(START_YEAR, END_YEAR)}
 
-# open the csv file and read it
+# open the csv file and read it into a dictionary
 with open('movies.csv','r') as movies:
-    plots = csv.reader(movies, delimiter=',')
-
-    # make it a list and delete the first row of the list
-    list_plots = list(plots)
-    del list_plots[0]
-
-    # add the values into the global dictionary (Year: [ratings])
-    for row in list_plots:
-        data_dict[row[2]].append(float(row[1]))
+    movies = csv.DictReader(movies, delimiter=',')
+    for movie in movies:
+        data_dict[movie["Year"]].append(float(movie["Rating"]))
 
     # calculate the average for every year
     avg = {}
     for key,value in data_dict.items():
-        # v is the list of ratings for student k
         avg[key] = sum(value)/ (len(value))
 
 # sort the dictionary and plot it
