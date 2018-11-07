@@ -1,5 +1,5 @@
-# Name:
-# Student number:
+# Name: Ruchella Kock
+# Student number: 12460796
 """
 This script crawls the IMDB top 250 movies.
 """
@@ -165,18 +165,17 @@ def scrape_top_250(soup):
     """
     movie_urls = []
     containers = soup.find_all("td",class_="titleColumn")
-    # for container in containers:
-    #     link = container.a['href']
-    #     link = "https://www.imdb.com" + link
-    #     #print(link)
-    #     movie_urls.append(link)
-    link = f"https://www.imdb.com{containers[10].a['href']}"
-    #print(link)
-    movie_urls.append(link)
+    for container in containers:
+        link = container.a['href']
+        link = "https://www.imdb.com" + link
+        #print(link)
+        movie_urls.append(link)
+    # link = f"https://www.imdb.com{containers[10].a['href']}"
+    # #print(link)
+    # movie_urls.append(link)
 
     # YOUR SCRAPING CODE GOES HERE, ALL YOU ARE LOOKING FOR ARE THE ABSOLUTE
     # URLS TO EACH MOVIE'S IMDB PAGE, ADD THOSE TO THE LIST movie_urls.
-    print(movie_urls)
     return movie_urls
 
 
@@ -232,10 +231,6 @@ def scrape_movie_page(dom):
     number_of_ratings = dom.find_all("div", class_="imdbRating")
     movie.append(number_of_ratings[0].a.string)
 
-
-    # YOUR SCRAPING CODE GOES HERE:
-    # Return everything of interest for this movie (all strings as specified
-    # in the docstring of this function).
     return movie
 
 def credits(credit):
@@ -248,7 +243,4 @@ def credits(credit):
 
 
 if __name__ == '__main__':
-    main()  # call into the progam
-
-    # If you want to test the functions you wrote, you can do that here:
-    # ...
+    main()
