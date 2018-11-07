@@ -36,37 +36,38 @@ def extract_movies(dom):
         movie.append(title.a.string)
 
         # find rating
-        rating =  container.find("div", class_="inline-block ratings-imdb-rating")
+        rating = container.find("div", class_="inline-block ratings-imdb-rating")
         movie.append(rating.strong.string)
 
         # find the year of realease print without ()
         year_container = container.find("span", class_="lister-item-year")
-        year = year_container.string
         # find the digits of the string to make sure you only find the year
-        year = re.findall('\d+', year)
+        year = re.findall('\d+', year_container.string)
         year = "".join(year)
         movie.append(year)
 
         # find the stars
         rating_bar = container.find("div", class_="lister-item-content")
-        p_with_stars = rating_bar.find_all("p", class_= "")
+        p_with_stars = rating_bar.find_all("p", class_="")
         span_in_p = p_with_stars[1].find("span")
         # if there are no stars then add an empty string
         if span_in_p != None:
             stars_list = span_in_p.find_next_siblings("a")
             stars = map(lambda star: star.string, stars_list)
-            #print(list(stars))
-            movie.append(",".join(list(stars)))
+            movie.append(", ".join(list(stars)))
         else:
             movie.append("")
 
         # find runtime
         runtime = container.find("span", class_="runtime")
-        movie.append(runtime.string)
+        runtime = re.findall('\d+', runtime.string)
+        runtime = "".join(runtime)
+        movie.append(runtime)
 
         # add movie to the movies list
         movies.append(movie)
     return movies
+
 
 def save_csv(outfile, movies):
     """
@@ -77,7 +78,7 @@ def save_csv(outfile, movies):
     for movie in movies:
         writer.writerow([m for m in movie])
 
-    # ADD SOME CODE OF YOURSELF HERE TO WRITE THE MOVIES TO DISK
+
 def simple_get(url):
     """
     Attempts to get the content at `url` by making an HTTP GET request.
