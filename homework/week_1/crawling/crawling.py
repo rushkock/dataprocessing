@@ -170,7 +170,7 @@ def scrape_top_250(soup):
     #     link = "https://www.imdb.com" + link
     #     #print(link)
     #     movie_urls.append(link)
-    link = f"https://www.imdb.com{containers[0].a['href']}"
+    link = f"https://www.imdb.com{containers[10].a['href']}"
     #print(link)
     movie_urls.append(link)
 
@@ -204,25 +204,25 @@ def scrape_movie_page(dom):
 
     # get the genre
     genre = dom.find("div", class_="subtext")
-    movie.append(genre.time.next_sibling.next_sibling.next_sibling.next_sibling.string.strip())
-    genres = dom.find_all("a", href=re.compile("search/title?genres"))
-    print(genres)
+    #movie.append(genre.time.next_sibling.next_sibling.next_sibling.next_sibling.string.strip())
+    genres = genre.find_all("a", href=re.compile("genres"))
+    all_genres = map(lambda x: x.string.strip(), genres)
+    movie.append(";".join(all_genres))
 
     # get the credit summary which contains directors, writers and stars_list
     credit = dom.find_all("div", class_="credit_summary_item")
 
     # get the director names
     directors = credits(credit[0])
-    movie.append(";".join(directors))
+    movie.append(directors)
 
     # get the writer names
     writers = credits(credit[1])
-    movie.append(";".join(writers))
+    movie.append(writers)
 
     # get the star names
     actors = credits(credit[2])
-    del actors[-1]
-    movie.append(";".join(actors))
+    movie.append(actors)
 
     # get the rating
     rating = dom.find("div", class_="imdbRating")
@@ -242,9 +242,9 @@ def credits(credit):
     """
     Get the directors, writers and Actors
     """
-    find_names = credit.h4.find_next_siblings("a")
+    find_names = credit.h4.find_next_siblings("a", href= re.compile("name"))
     name = map(lambda x: x.string, find_names)
-    return list(name)
+    return ";".join(list(name))
 
 
 if __name__ == '__main__':
