@@ -40,6 +40,8 @@ def main():
 
     # read the csv into a dataframe
     df = pd.read_csv("input.csv", index_col = 0, usecols = columns, na_values = na_values, decimal = ",")
+
+    # rename columns for ease
     df.columns = names_columns
 
     # -------------preprocessing--------------

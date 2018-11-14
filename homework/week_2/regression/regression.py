@@ -56,6 +56,7 @@ def test_assumptions(res, df):
     This implies that the assumption of homoscedasticity may not be met
     """
 
+
     # check linearity assumption statistically
     print("\nCHECK ASSUMPTIONS")
     print("LINEARITY")
@@ -95,6 +96,7 @@ def test_assumptions(res, df):
         print("There is evidence of multicollinearity, VIF is bigger than 10")
         print("Assumption is NOT met\n")
         counter = counter + 1
+
 
     # check for outliers
     print("OUTLIERS")
@@ -182,7 +184,7 @@ def main():
     # drop NAN values from columns
     df = df.dropna()
 
-    # -------------OLS-------------------------
+    # -------------OLS---------------------
     mod = smf.ols(formula = "Literacy ~ Deathrate", data = df)
     res =  mod.fit()
     print(res.summary())
@@ -234,6 +236,7 @@ def main():
     There is a weak negative relationship between deathrate and literacy.
     This means the lower the literacy the higher the deathrate.
     """
+    
     plt.show()
 
 if __name__ == "__main__":
