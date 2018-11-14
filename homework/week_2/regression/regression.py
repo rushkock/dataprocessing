@@ -12,7 +12,6 @@ import statsmodels.stats.api as sms
 from statsmodels.stats import outliers_influence
 from statsmodels.graphics.regressionplots import abline_plot
 import matplotlib.pyplot as plt
-import scipy as sp
 
 def test_assumptions(res, df):
     """
@@ -60,14 +59,14 @@ def test_assumptions(res, df):
     # check linearity assumption statistically
     print("\nCHECK ASSUMPTIONS")
     print("LINEARITY")
-    print("At a = 0.01, ", end ="")
+    print("At alpha = 0.01, ", end ="")
     linearity_assump = sms.linear_harvey_collier(res)
     if linearity_assump[1] < 0.01:
-        print(f"Null hypothesis is rejected (F value: {linearity_assump[0]}, P value: {linearity_assump[1]})")
+        print(f"Null hypothesis is rejected (F value = {linearity_assump[0]}, P value = {linearity_assump[1]})")
         print("This implies that there is no evidence of a linear relationship, assumption is NOT met")
         counter = counter + 1
     else:
-        print(f"Null hypothesis is not rejected (F value: {linearity_assump[0]}, P value: {linearity_assump[1]})")
+        print(f"Null hypothesis is not rejected (F value = {linearity_assump[0]}, P value = {linearity_assump[1]})")
         print("This implies that there is evidence of a linear relationship, assumption is met")
     print()
 
@@ -77,18 +76,18 @@ def test_assumptions(res, df):
     test = sms.het_breuschpagan(res.resid, res.model.exog)
     print("At alpha = 0.01, ", end ="")
     if test[1] < 0.01:
-        print(f"Null hypothesis is rejected (F value: {test[2]}, P value: {test[1]})")
+        print(f"Null hypothesis is rejected (F value = {test[2]}, P value = {test[1]})")
         print("This implies that there is dependent error variance, assumption is NOT met\n")
         counter = counter + 1
     else:
-        print(f"Null hypothesis is not rejected (F value: {test[2]}, P value: {test[1]})")
+        print(f"Null hypothesis is not rejected (F value = {test[2]}, P value =  {test[1]})")
         print("This implies that there is no dependent error variance, assumption is met\n")
 
 
     # check multicollinearity assumption
     print("MULTICOLLINEARITY")
     VIF = outliers_influence.variance_inflation_factor(res.model.exog, 0)
-    print(f"VIF: {VIF}")
+    print(f"VIF = {VIF}")
     if VIF < 10:
         print("There is no evidence of multicollinearity, VIF is smaller than 10")
         print("Assumption is met\n")
@@ -194,8 +193,8 @@ def main():
 
     # anlyzise regression data
     print("ANALYSIS")
-    print(f"F value : {res.fvalue}")
-    print(f"P value : {res.f_pvalue}")
+    print(f"F value = {res.fvalue}")
+    print(f"P value = {res.f_pvalue}")
     if res.f_pvalue < 0.01:
         print(f"The null hypothesis of no relationship between {columns[1]} and {columns[2]} is rejected")
         print("This means we may assume there is a linear relationship between them")
@@ -219,10 +218,8 @@ def main():
     print("REGRESSION FORMULA")
     intercept = regression[1]
     slope = regression[0]
-    if slope < 0:
-        print(f"{round(intercept,2):.2f} {round(slope,2):.2f} * {columns[2]}")
-    else:
-        print(f"{round(intercept,2):.2f} + {round(slope,2):.2f} * {columns[2]}")
+    plus = "" if slope < 0 else "+"
+    print(f"{round(intercept,2):.2f} {plus} {round(slope,2):.2f} * {columns[2]}")
 
     # Plot the regression line
     ax = df.plot(x = "Deathrate", y = "Literacy", kind = "scatter")
@@ -236,7 +233,7 @@ def main():
     There is a weak negative relationship between deathrate and literacy.
     This means the lower the literacy the higher the deathrate.
     """
-    
+
     plt.show()
 
 if __name__ == "__main__":

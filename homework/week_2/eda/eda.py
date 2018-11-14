@@ -9,8 +9,6 @@ Infant mortality (per 1000 births), GDP ($ per capita) dollars
 Creates a boxplot of infant mortality
 Creates a histogram of GDP
 """
-import csv
-import json
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -53,7 +51,7 @@ def main():
     # that works if you have NAN values
     # tried:
     # df["GDP"] = df["GDP"].apply(lambda x: int(x) if x > 0.0 else x)
-    # df["GDP"] = pd.to_numeric(df["GDP"], downcast = "signed")
+    # df["GDP"] = pd.to_numeric(df["GDP"], errors = "coerce", downcast = "signed")
     # astype
 
     # remove extra spaces from region
@@ -108,6 +106,7 @@ def main():
     # rename columns to old names
     names = ["Region", "Pop. Density (per sq. mi.)","Infant mortality (per 1000 births)", "GDP ($ per capita) dollars"]
     df.columns = names
+    
     # write to json file
     df.to_json(path_or_buf = "eda.json", orient = "index")
 
