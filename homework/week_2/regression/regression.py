@@ -59,7 +59,7 @@ def test_assumptions(res, df):
     # check linearity assumption statistically
     print("\nCHECK ASSUMPTIONS")
     print("LINEARITY")
-    print("At a = 0.01, ", end="")
+    print("At a = 0.01, ", end ="")
     linearity_assump = sms.linear_harvey_collier(res)
     if linearity_assump[1] < 0.01:
         print(f"Null hypothesis is rejected (F value: {linearity_assump[0]}, P value: {linearity_assump[1]})")
@@ -74,7 +74,7 @@ def test_assumptions(res, df):
     # check homoscedasticity assumption statistically
     print("HOMOSCEDASTICITY")
     test = sms.het_breuschpagan(res.resid, res.model.exog)
-    print("At a = 0.01, ", end="")
+    print("At alpha = 0.01, ", end ="")
     if test[1] < 0.01:
         print(f"Null hypothesis is rejected (F value: {test[2]}, P value: {test[1]})")
         print("This implies that there is dependent error variance, assumption is NOT met\n")
@@ -135,7 +135,7 @@ def test_assumptions(res, df):
     """
 
     # influence plot
-    sm.graphics.influence_plot(res, criterion="cooks")
+    sm.graphics.influence_plot(res, criterion = "cooks")
     plt.title("Fig 3: Influence Plot")
 
     """
@@ -153,8 +153,8 @@ def test_assumptions(res, df):
 
 
     # check for normality
-    probplot = sm.ProbPlot(residuals, fit=True)
-    probplot.ppplot(line="r")
+    probplot = sm.ProbPlot(residuals, fit = True)
+    probplot.ppplot(line = "r")
     plt.title("Fig 4: P-P Plot test of Normality")
     """
     ---------------Fig 4 analysis ------------
@@ -176,14 +176,14 @@ def main():
     names_columns = ["Literacy" , "Deathrate"]
 
     # read the csv into a dataframe
-    df = pd.read_csv("input.csv", index_col= 0, usecols= columns, na_values = na_values, decimal=",")
+    df = pd.read_csv("input.csv", index_col = 0, usecols= columns, na_values = na_values, decimal = ",")
     df.columns = names_columns
 
     # drop NAN values from columns
     df = df.dropna()
 
     # -------------OLS-------------------------
-    mod = smf.ols(formula="Literacy ~ Deathrate", data=df)
+    mod = smf.ols(formula = "Literacy ~ Deathrate", data = df)
     res =  mod.fit()
     print(res.summary())
 
@@ -223,8 +223,8 @@ def main():
         print(f"{round(intercept,2):.2f} + {round(slope,2):.2f} * {columns[2]}")
 
     # Plot the regression line
-    ax = df.plot(x="Deathrate", y='Literacy', kind='scatter')
-    abline_plot(model_results= res, ax=ax)
+    ax = df.plot(x = "Deathrate", y = "Literacy", kind = "scatter")
+    abline_plot(model_results = res, ax = ax)
     plt.xlabel("Deathrate")
     plt.ylabel("Literacy")
     plt.title("Fig 5: Regression Plot")
@@ -236,5 +236,5 @@ def main():
     """
     plt.show()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

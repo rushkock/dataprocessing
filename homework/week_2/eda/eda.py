@@ -39,12 +39,12 @@ def main():
     names_columns = ["Region", "Pop_density", "Infant_mortality", "GDP"]
 
     # read the csv into a dataframe
-    df = pd.read_csv("input.csv", index_col= 0, usecols= columns, na_values = na_values, decimal=",")
+    df = pd.read_csv("input.csv", index_col = 0, usecols = columns, na_values = na_values, decimal = ",")
     df.columns = names_columns
 
     # -------------preprocessing--------------
     # remove all non digits to GDP and make it of type numeric
-    df['GDP'].replace(regex=True,inplace=True,to_replace=r'\D',value=r'')
+    df["GDP"].replace(regex = True, inplace = True,to_replace = r"\D",value = r"")
     df["GDP"] = pd.to_numeric(df["GDP"])
 
     # note I was unable to transform the float to int, couldn't find a method in pandas
@@ -76,7 +76,7 @@ def main():
 
     # check for outliers and remove them, plot the GDP in a histogram
     plt.subplot(1, 2, 1)
-    hist = plt.hist(data, bins=50)
+    hist = plt.hist(data, bins = 50)
     plt.title("GDP")
     plt.xlabel("$ per capita")
     plt.ylabel("Number of countries")
@@ -93,11 +93,11 @@ def main():
 
     # make the boxplot
     plt.subplot(1, 2, 2)
-    df["Infant_mortality"].plot(kind="box", title = "Infant mortality (per 1000 births)", label="")
+    df["Infant_mortality"].plot(kind = "box", title = "Infant mortality (per 1000 births)", label = "")
     plt.suptitle("")
     """
     In this boxplot we see a mean of around 20
-    We see 5 outliers that may influence the data 
+    We see 5 outliers that may influence the data
     The 100% is around 124 whereas the max is 191 This is quite a "big" difference
     """
 
@@ -107,7 +107,7 @@ def main():
     names = ["Region", "Pop. Density (per sq. mi.)","Infant mortality (per 1000 births)", "GDP ($ per capita) dollars"]
     df.columns = names
     # write to json file
-    df.to_json(path_or_buf="eda.json", orient='index')
+    df.to_json(path_or_buf = "eda.json", orient = "index")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
