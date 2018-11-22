@@ -4,14 +4,26 @@
 <html>
 <head>
   <title>Line Graph</title>
+  <style>
+    canvas
+    {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+    }
+  </style>
 </head>
+
 
 <body>
   <canvas id="lineGraph" width="900" height="500"
   style="border:1px solid #d3d3d3;">
   </canvas>
 
+  <canvas id="crossHairs" width="900" height="500">
+
 </body>
+
 
 <script>
   // read the json file into a HTTP request
@@ -43,6 +55,13 @@
       var canvas = document.getElementById("lineGraph");
       var ctx = canvas.getContext("2d");
 
+      /**
+      Note: I choose to not start at 0 as none of my data points
+      start anywhere close to zer0. 0 victims is also an unrealistic number
+      However, this may provide a distorted view of the data
+      **/
+
+
       // get the range and domain for the createTransform function
       var rangeX = [0, canvas.width];
       var rangeY = [0, canvas.height];
@@ -58,6 +77,7 @@
       // make a function that will calculate the x and y coordinates
       var x = createTransform(xAxes, rangeX);
       var y = createTransform(yAxes, rangeY);
+
 
       // write text on the x axis
       for (key in data)
@@ -147,6 +167,48 @@
       // write the title
       ctx.font = "30px Comic Sans MS";
       ctx.fillText("Rape victims in the United States per 100,000 Inhabitants", 75 ,50);
+
+      // get the location of mouse
+      document.addEventListener("mousemove", drawCrossHair);
+
+      function drawCrossHair()
+      {
+        var canvasCross = document.getElementById("crossHairs")
+        var context = canvasCross.getContext("2d");
+        var bounding = canvasCross.getBoundingClientRect();
+
+        // Get the horizontal coordinate
+        var xMouse = event.clientX + bounding.left;
+        // Get the vertical coordinate
+        var yMouse = event.clientY + bounding.top;
+
+        var closestKey = 0
+        // look for closest data point
+        for (var key in data)
+        {
+          var xRape = x(parseInt(key));
+          var delta = Math.abs(xMouse - xRape)
+
+          if (closestKey === 0 || delta < Math.abs(xMouse - x(parseInt(closestKey))))
+          {
+            closestKey = key
+          }
+        }
+
+        // draw the crosshairs
+        context.clearRect(0,0,canvas.width, canvas.height);
+        context.lineWidth = 2;
+        context.setLineDash([5, 3]);
+      	context.beginPath();
+        context.moveTo(x(parseInt(closestKey)), 0);
+        context.lineTo(x(parseInt(closestKey)), canvas.height);
+        context.stroke();
+
+        context.beginPath();
+        context.moveTo(0, canvas.height - y(data[closestKey].Rape));
+        context.lineTo(canvas.width, canvas.height - y(data[closestKey].Rape));
+        context.stroke();
+      }
     }
   }
   txtFile.open("GET", fileName);
