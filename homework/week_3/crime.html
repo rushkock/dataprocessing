@@ -65,50 +65,50 @@
       var ctx = canvas.getContext("2d");
 
 
-            // write text on the x axis
-            for (key in data)
-            {
-              xRape = x(parseInt(key));
-              ctx.font = "15px Comic Sans MS";
-              ctx.fillText(key, xRape, canvas.height - 20);
-            }
+      // write text on the x axis
+      for (key in data)
+      {
+        xRape = x(parseInt(key));
+        ctx.font = "15px Comic Sans MS";
+        ctx.fillText(key, xRape, canvas.height - 20);
+      }
 
-            // write x xlabel
-            ctx.fillText("Year", canvas.width/2, canvas.height - 5)
+      // write x xlabel
+      ctx.fillText("Year", canvas.width/2, canvas.height - 5)
 
 
-            // draw a line for the y axis
-            ctx.beginPath();
-            ctx.strokeStyle="blue";
-            ctx.moveTo(0 + 55, canvas.height - 0);
-            ctx.lineTo(0 + 55, canvas.height - 45);
-            ctx.lineTo(0 + 40, canvas.height - 50);
-            ctx.lineTo(0 + 65, canvas.height - 60);
-            ctx.lineTo(0 + 55, canvas.height - 70);
-            ctx.lineTo(0 + 55, 0);
-            ctx.stroke();
+      // draw a line for the y axis
+      ctx.beginPath();
+      ctx.strokeStyle="blue";
+      ctx.moveTo(0 + 55, canvas.height - 0);
+      ctx.lineTo(0 + 55, canvas.height - 45);
+      ctx.lineTo(0 + 40, canvas.height - 50);
+      ctx.lineTo(0 + 65, canvas.height - 60);
+      ctx.lineTo(0 + 55, canvas.height - 70);
+      ctx.lineTo(0 + 55, 0);
+      ctx.stroke();
 
-            // write text for y axis
-            var steps = 2500;
-            for (var i = yAxes[0]; i <= 100000; i += steps)
-            {
-              var ytext = y(i);
-              ctx.strokeStyle="grey";
-              ctx.font = "15px Comic Sans MS";
-              ctx.textAlign="start";
-              if (i === yAxes[0] + steps)
-              {
-                ctx.fillText(0, 0, canvas.height- ytext);
-              }
-              else if (i != yAxes[0])
-              {
-                ctx.fillText(parseInt(i), 0, canvas.height- ytext);
-              }
-              ctx.beginPath();
-              ctx.moveTo(0, canvas.height - ytext);
-              ctx.lineTo(xAxes[1], canvas.height - ytext);
-              ctx.stroke();
-            }
+      // write text for y axis
+      var steps = 2500;
+      for (var i = yAxes[0]; i <= 100000; i += steps)
+      {
+        var ytext = y(i);
+        ctx.strokeStyle="grey";
+        ctx.font = "15px Comic Sans MS";
+        ctx.textAlign="start";
+        if (i === yAxes[0] + steps)
+        {
+          ctx.fillText(0, 0, canvas.height- ytext);
+        }
+        else if (i != yAxes[0])
+        {
+          ctx.fillText(parseInt(i), 0, canvas.height- ytext);
+        }
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height - ytext);
+        ctx.lineTo(xAxes[1], canvas.height - ytext);
+        ctx.stroke();
+      }
 
       // go over every value in data
       ctx.beginPath();
