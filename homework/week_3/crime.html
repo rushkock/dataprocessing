@@ -1,5 +1,5 @@
 <!--Name: Ruchella Kock-->
-<!--Student number: 12460796-->
+<!--Student number: 1815458-->
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,9 +7,10 @@
 </head>
 
 <body>
-  <canvas id="myCanvas" width="900" height="500"
+  <canvas id="lineGraph" width="900" height="500"
   style="border:1px solid #d3d3d3;">
   </canvas>
+
 </body>
 
 <script>
@@ -23,14 +24,10 @@
       var data =  JSON.parse(txtFile.responseText);
       var keys = [];
       var values = [];
-      // go over every value in data and get the key, append to array
+      // get the key and value for Rape
       for (var key in data)
       {
-        // go over everything inside of the key, append to array
-        for (var dt in data[key])
-        {
-          values.push(data[key].Rape);
-        }
+        values.push(data[key].Rape);
         keys.push(parseInt(key));
       }
 
@@ -42,7 +39,9 @@
         max = array[array.length-1];
         return [min,max];
       }
-      var canvas = document.getElementById("myCanvas");
+      // get the canvas from html
+      var canvas = document.getElementById("lineGraph");
+      var ctx = canvas.getContext("2d");
 
       // get the range and domain for the createTransform function
       var rangeX = [0, canvas.width];
@@ -53,17 +52,12 @@
       // extend the ranges
       yAxes[0] = 70000;
       yAxes[1] = 105000;
-      xAxes[0] = xAxes[0] - 1.5;
+      xAxes[0] = xAxes[0] - 2;
       xAxes[1] = xAxes[1] + 1;
 
       // make a function that will calculate the x and y coordinates
       var x = createTransform(xAxes, rangeX);
       var y = createTransform(yAxes, rangeY);
-
-      // get the canvas from HTML
-      var canvas = document.getElementById("myCanvas");
-      var ctx = canvas.getContext("2d");
-
 
       // write text on the x axis
       for (key in data)
@@ -80,12 +74,12 @@
       // draw a line for the y axis
       ctx.beginPath();
       ctx.strokeStyle="blue";
-      ctx.moveTo(0 + 55, canvas.height - 0);
-      ctx.lineTo(0 + 55, canvas.height - 45);
-      ctx.lineTo(0 + 40, canvas.height - 50);
-      ctx.lineTo(0 + 65, canvas.height - 60);
-      ctx.lineTo(0 + 55, canvas.height - 70);
-      ctx.lineTo(0 + 55, 0);
+      ctx.moveTo(0 + 70, canvas.height - 0);
+      ctx.lineTo(0 + 70, canvas.height - 45);
+      ctx.lineTo(0 + 60, canvas.height - 50);
+      ctx.lineTo(0 + 85, canvas.height - 60);
+      ctx.lineTo(0 + 70, canvas.height - 70);
+      ctx.lineTo(0 + 70, 0);
       ctx.stroke();
 
       // write text for y axis
@@ -98,11 +92,11 @@
         ctx.textAlign="start";
         if (i === yAxes[0] + steps)
         {
-          ctx.fillText(0, 0, canvas.height- ytext);
+          ctx.fillText(0, 0 + 15, canvas.height- ytext);
         }
         else if (i != yAxes[0])
         {
-          ctx.fillText(parseInt(i), 0, canvas.height- ytext);
+          ctx.fillText(parseInt(i), 0 + 15, canvas.height- ytext);
         }
         ctx.beginPath();
         ctx.moveTo(0, canvas.height - ytext);
@@ -110,7 +104,16 @@
         ctx.stroke();
       }
 
-      // go over every value in data
+      // write ylabel
+      // rotate canvas, write text rotate again
+      ctx.save();
+      ctx.translate( 0, 0 );
+      ctx.rotate( Math.PI / 2 );
+      ctx.textAlign = "left";
+      ctx.fillText("Number of People", canvas.width/4, -3 );
+      ctx.restore();
+
+      // draw the line from the line graph
       ctx.beginPath();
       for (var key in data)
       {
@@ -129,11 +132,11 @@
         ctx.stroke();
       }
 
+      // draw dots at every value
       for (var key in data)
       {
         var xRape = x(parseInt(key));
         var yRape = y(data[key].Rape);
-        // draw dots at every value
         ctx.beginPath();
         ctx.strokeStyle="black";
         ctx.lineWidth = 7;
@@ -143,7 +146,7 @@
       }
       // write the title
       ctx.font = "30px Comic Sans MS";
-      ctx.fillText("Rape victims in the United States per 100,000 Inhabitants", 55 ,50);
+      ctx.fillText("Rape victims in the United States per 100,000 Inhabitants", 75 ,50);
     }
   }
   txtFile.open("GET", fileName);
@@ -151,21 +154,21 @@
 
   function createTransform(domain, range)
   {
-	// domain is a two-element array of the data bounds [domainMin, domainMax]
-	// range is a two-element array of the screen bounds [rangeMin, rangeMax]
+	// domain is a two-element array of the data bounds [domain_min, domain_max]
+	// range is a two-element array of the screen bounds [range_min, range_max]
 	// this gives you two equations to solve:
-	// rangeMin = alpha * domainMin + beta
-	// rangeMax = alpha * domainMax + beta
+	// range_min = alpha * domain_min + beta
+	// range_max = alpha * domain_max + beta
  		// a solution would be:
 
-    var domainMin = domain[0];
-    var domainMax = domain[1];
-    var rangeMin = range[0];
-    var rangeMax = range[1];
+    var domain_min = domain[0];
+    var domain_max = domain[1];
+    var range_min = range[0];
+    var range_max = range[1];
 
     // formulas to calculate the alpha and the beta
-   	var alpha = (rangeMax - rangeMin) / (domainMax - domainMin);
-    var beta = rangeMax - alpha * domainMax;
+   	var alpha = (range_max - range_min) / (domain_max - domain_min);
+    var beta = range_max - alpha * domain_max;
 
     // returns the function for the linear transformation (y= a * x + b)
     return function(x)
