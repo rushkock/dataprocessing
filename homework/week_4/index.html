@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Test</title>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+
+
+        <style type="text/css">
+          svg {
+              margin-left: 100px;
+          }
+
+          .mytooltip
+          {
+            /* position relative to previous pos */
+            position:absolute;
+            /*  align box */
+            text-align: left;
+            /*  width of box*/
+            width: 100px;
+            height: 50;
+            /*  color of box */
+            background-color: #FFA07A;
+            /*  make it round*/
+            border-radius: 5px;
+            /*  color of text */
+            color: #000000;
+            /* adjust box size */
+            /* padding: 5px 10px; */
+          }
+
+          /* This is the triangle */
+          .mytooltip:after {
+            /*  padding and border included in box*/
+            box-sizing: border-box;
+            display: inline;
+            /*  width of box */
+            width: 100%;
+            /*  position triangle relative to box*/
+            line-height: 1;
+            /*  color triangle */
+            color: #000000;
+            /* type of traingle : chosen left */
+            content: "\25C0";
+            position: absolute;
+            text-align: left;
+            /* set margins (move triangle around) */
+            margin: 0 0 0 -12px;
+            /* position from top */
+            top: 30%;
+            left: 0;
+          }
+          /*  text inside box */
+          .mytooltip span
+          {
+            display: block;
+            text-align: center;
+            width: 100px;
+            height: auto;
+            margin: 5px auto;
+          }
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript">
+            // a title for your future bar chart page (in the <head> tag of your html)
+            d3.select("head").append("title").text("D3 Test");
+
+            // a title for your future bar chart (in the <body> tag of your html)
+            d3.select("body").append("h1").text("UN E-Participation index");
+
+            // a bit of text including your name and your student number
+            d3.select("body").append("h3").text("Ruchella Kock");
+            d3.select("body").append("h3").text("12460796");
+
+            // a short paragraph with a description of your dataset and visualization
+            d3.select("body").append("p").text("\
+               This dataset contains information from the E-government.\
+               E-government is defined as using ICTs to deliver government\
+               services to citizens and businesses.\
+               This visualisation contains the participation index of different\
+               countries in the United Nation. The participation index is a value\
+               assigned to each country that says something about how they are using\
+               online tools to promote the interactions between the government of\
+               that country and its citizens and among citizens.");
+            var barPadding = 5;
+
+            var margin = {top: 20, right: 30, bottom: 70, left: 0};
+            var w = 500 - margin.left - margin.right;
+            var h = 5500 - margin.top - margin.bottom;
+
+            data = d3.json("EGOV.json")
+            .then(function(data)
+            {
+              length = data.length
+              var xScale = d3.scaleLinear().domain([0, 1]).range([0, w]);
+              var yScale = d3.scaleLinear().domain([0, length]).range([0, h]);
+
+              var myTool = d3.select("body")
+                  .append("div")
+                  .attr("class", "mytooltip")
+                  .style("display", "none");
+
+               // make SVG
+               var svg =   d3.select("body")
+                           .append("svg")
+                           .attr("class", "chart")
+                           .attr("width", w + margin.left + margin.right)
+                           .attr("height", h + margin.top + margin.bottom);
+
+              // write text on y axis
+               var Country = svg.append("text")
+                             .attr("transform", "rotate(-90)")
+                             .attr("y", 15)
+                             .attr("x", -300)
+                             .style("font-size", "20px")
+                             .text("Country");
+
+              // write text on x axis
+               var EPI = svg.append("text")
+                             .attr("y", 20)
+                             .attr("x", (w - margin.left - margin.right)/2)
+                             .style("font-size", "20px")
+                             .text("E-Percentage");
+
+              // make xAxis
+               var xAxis = d3.axisTop()
+                              .scale(xScale);
+
+                           svg.append("g")
+                              .attr("transform", "translate(20, 50)")
+
+                              .call(xAxis);
+
+               var yAxis = d3.axisLeft()
+                             .scale(yScale);
+
+                           svg.append("g")
+                              .attr("transform", "translate(20, 50)")
+                              .call(yAxis);
+
+                          //  make a line down the average
+                          svg.append("line")
+                              .style("stroke", "black")
+                              .attr("x1", (w + margin.left + margin.right)/2 + 6)
+                              .attr("y1", 50)
+                              .attr("x2", 200)
+                              .attr("y2", h + margin.bottom)
+
+              // Make the bars
+              var rect = svg.selectAll("rect")
+                            .data(data.sort(function(a,b){return b.EPI-a.EPI}))
+                            .enter()
+                            .append("rect");
+
+
+              //Color gradient of the bars
+              var colorScale = d3.scaleLinear()
+                  .range(['#FF0033','#FFFF33'])
+                  .domain([0, 2]);
+
+              // Choose the position on the y axis of the bar
+              rect.attr("y", function(d, i)
+              {
+                return i * (h / data.length) + 52;
+              })
+
+              // choose the postion on the x axis of the bar
+              // move the chart left or right
+              .attr("x", function(d)
+              {
+                return 0 + 21;
+              })
+
+              // Choose height of the bars
+              .attr("width", function(d)
+              {
+                 return xScale(d.EPI);
+              })
+
+              // choose width of the bars
+              .attr("height", h / data.length - barPadding)
+
+              // add colour
+              .attr("fill", function(d)
+              {
+                  return colorScale(d.EPI);
+              })
+
+              .on("mouseover", function(d)
+              {
+                //bars
+                   d3.select(this)
+                       .transition()
+                       .duration(10)
+                       .attr("fill", function(d)
+                       {
+                           return "yellow";
+                       })
+
+                       //text
+                       myTool
+                       .transition()
+                       .duration(10)
+                       .style("display", "block")
+
+
+                       myTool
+                          .html("<div id='thumbnail'><span>" + d.country + ": " + d.EPI +  "</span></div>")
+                          .style("left", + xScale(d.EPI) + 150 + "px")
+                          .style("top", (d3.event.pageY)  - 10 + "px")
+
+              })
+              .on("mouseout", function(d)
+              {
+                   d3.select(this)
+                       .transition()
+                       .duration(10)
+                       .attr("fill", function(d)
+                       {
+                           return colorScale(d.EPI);
+                       })
+
+                       myTool
+                       .transition()
+                       .duration(10)
+                       .style("display", "none") //The tooltip disappears
+             });
+            });
+        </script>
+    </body>
+</html>
