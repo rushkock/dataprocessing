@@ -74,6 +74,7 @@
             // a bit of text including your name and your student number
             d3.select("body").append("h3").text("Ruchella Kock");
             d3.select("body").append("h3").text("12460796");
+            d3.select()
 
             // a short paragraph with a description of your dataset and visualization
             d3.select("body").append("p").text("\
@@ -121,9 +122,9 @@
               // write text on x axis
                var EPI = svg.append("text")
                              .attr("y", 20)
-                             .attr("x", (w - margin.left - margin.right)/2)
+                             .attr("x", (w - margin.left - margin.right)/3)
                              .style("font-size", "20px")
-                             .text("E-Percentage");
+                             .text("E-Participation Index");
 
               // make xAxis
                var xAxis = d3.axisTop()
