@@ -11,6 +11,8 @@ window.onload = function()
   var requests = [d3.json(womenInScience), d3.json(consConf)];
 
   Promise.all(requests).then(function(response) {
+    xny = formatAllData(response)
+    makeAxes(xny)
     update(response)
   }).catch(function(e){
       throw(e);
