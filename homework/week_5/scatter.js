@@ -40,7 +40,6 @@ function makeAxes(xny)
 
   var cValue = function(d)
   {
-    console.log(d.Country)
     return d.Country;
   };
   var color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -92,7 +91,6 @@ function makeAxes(xny)
       .attr("r", 3.5)
       .attr("cx", function(d)
       {
-        console.log(d[0].datapoint)
         return x(d[0].datapoint);
       })
       .attr("cy", function(d) { return y(d[1].datapoint); })
