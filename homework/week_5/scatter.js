@@ -11,129 +11,227 @@ window.onload = function()
   var requests = [d3.json(womenInScience), d3.json(consConf)];
 
   Promise.all(requests).then(function(response) {
-    xny = formatAllData(response)
-    makeAxes(xny)
-    update(response)
+    xny = formatAllData(response);
+    svg = makeSVG();
+    makeAxes(svg, xny);
+    update(svg, response);
   }).catch(function(e){
       throw(e);
   });
 };
-
-// this function makes the x and y axes
-function makeAxes(xny)
+function makeSVG()
 {
-  d3.select("svg").remove();
-  // add the tooltip area to the webpage
-  var tooltip = d3.select("body").append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0);
+  var margin = {top: 25, right: 20, bottom: 30, left: 60},
+      width = 960 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
 
-  var margin = {top: 20, right: 20, bottom: 30, left: 40},
+  var svg = d3.select("body")
+              .append("svg")
+              .attr("width", width + margin.left + margin.right)
+              .attr("height", height + margin.top + margin.bottom)
+              .append("g")
+              .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  return svg
+}
+// this function makes the x and y axes
+function makeAxes(svg, xny)
+{
+  svg.selectAll("*").remove();
+  var margin = {top: 25, right: 20, bottom: 30, left: 60},
       width = 960 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
   var x = d3.scaleLinear()
-      .range([0, width]);
+            .range([0, width]);
 
   var y = d3.scaleLinear()
-      .range([height, 0]);
+            .range([height, 0]);
 
-  var cValue = function(d)
-  {
-    return d.Country;
-  };
-  var color = d3.scaleOrdinal(d3.schemeCategory10);
+  var color = d3.scaleOrdinal()
+                .domain(["France", "Germany", "Korea", "Netherlands", "United Kingdom"])
+                .range(["#4575b4", "#d73027", "#e0f3f8", "#fc8d59", "#fee090", "#91bfdb"]);
 
   var xAxis = d3.axisBottom(x);
-
   var yAxis = d3.axisLeft(y);
-
-  var svg = d3.select("body").append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-  // consconf is on x Axis
-  consconf = xny[0]
-
-  // msti is on y Axis
-  msti = xny[1]
 
   x.domain(d3.extent(xny, function(d) { return d[0].datapoint; })).nice();
   y.domain(d3.extent(xny, function(d) { return d[1].datapoint; })).nice();
 
+  // make xAxis
   svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-    .append("text")
-      .attr("class", "label")
-      .attr("x", width)
-      .attr("y", -6)
-      .style("text-anchor", "end")
-      .text("Sepal Width (cm)");
+     .attr("class", "x axis")
+     .attr("transform", "translate(0," + height + ")")
+     .call(xAxis)
 
+ svg.append("text")
+     .attr("y", height)
+     .attr("x", width - margin.right - margin.left)
+     .style("font-size", "20px")
+     .text("MSTI");
+
+  // make Y Axis
   svg.append("g")
       .attr("class", "y axis")
       .call(yAxis)
-    .append("text")
-      .attr("class", "label")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Sepal Length (cm)")
 
-  svg.selectAll(".dot")
-      .data(xny)
-    .enter().append("circle")
-      .attr("class", "dot")
-      .attr("r", 3.5)
-      .attr("cx", function(d)
-      {
-        return x(d[0].datapoint);
-      })
-      .attr("cy", function(d) { return y(d[1].datapoint); })
-      .style("fill", function(d) { return color(d[1].Country);})
-      .on("mouseover", function(d) {
-          tooltip.transition()
-               .duration(200)
-               .style("opacity", .9);
-          tooltip.html("<div id='thumbnail'><span>" + "Consconf: " + Math.round(d[0].datapoint * 10) / 10
-          + "<br/> Msti: " +  Math.round(d[1].datapoint * 10) / 10 +  "</span></div>")
-               .style("left", (d3.event.pageX + 10) + "px")
-               .style("top", (d3.event.pageY - 28) + "px");
-      })
-      .on("mouseout", function(d) {
-          tooltip.transition()
-               .duration(500)
-               .style("opacity", 0);
-      });
+  svg.append("text")
+     .attr("transform", "rotate(-90)")
+     .attr("y", -margin.right - 20)
+     .attr("x", -(height / 2))
+     .style("font-size", "20px")
+     .text("Consconf");
 
-     var legend = svg.selectAll(".legend")
-         .data(color.domain())
-       .enter().append("g")
-         .attr("class", "legend")
-         .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
-     legend.append("rect")
-         .attr("x", width - 18)
-         .attr("width", 18)
-         .attr("height", 18)
-         .style("fill", color);
+  var countryColors = {"France" : "#4575b4", "Germany": "#d73027",
+                      "Korea" : "#e0f3f8", "Netherlands" : "#fc8d59",
+                      "Portugal" : "#91bfdb", "United Kingdom" : "#fee090"}
 
-     legend.append("text")
-         .attr("x", width - 24)
-         .attr("y", 9)
-         .attr("dy", ".35em")
-         .style("text-anchor", "end")
-         .text(function(d) { return d; });
+  // draw the dots and exis depending on what data was chosen
+  if (xny.length > 9)
+  {
+    drawDots(svg, x, y, function(d) { return color(d[1].Country)}, [10,50])
+    makeLegend(svg, color, width)
+  }
+  else
+  {
+    drawDots(svg, x, y, color(xny[0][1].Country), [10,50])
+    var color = d3.scaleOrdinal()
+              .domain([xny[0][1].Country])
+              .range([countryColors[xny[0][1].Country]]);
+    makeLegend(svg, color, width)
+  }
 }
 
-// this function loads the data into one array xny
+function drawDots(svg, x, y, color, domain)
+{
+  var tooltip = d3.select("body")
+                  .append("div")
+                  .attr("class", "tooltip")
+                  .style("opacity", 0);
+
+  var r = d3.scaleLinear()
+            .range([5, 15])
+            .domain(domain);
+
+  svg.selectAll(".dot")
+     .data(xny)
+     .enter()
+     .append("circle")
+     .attr("class", "dot")
+     .attr("r", function(d) { return (r(d[0].datapoint));})
+     .attr("cx", function(d) { return x(d[0].datapoint);})
+     .attr("cy", function(d) { return y(d[1].datapoint);})
+     .style("fill", color)
+     .style("stroke", "black")
+     .on("mouseover", function(d) {
+          tooltip.transition()
+                 .duration(200)
+                 .style("opacity", .9);
+
+          tooltip.html("<div id='thumbnail'><span> Year: " + d[0].time +
+                       "<br> Consconf: " + Math.round(d[1].datapoint * 10) / 10 +
+                       "<br/> Msti: " +  Math.round(d[0].datapoint * 10) / 10 +
+                       "</span></div>")
+                 .style("left", (d3.event.pageX + 10) + "px")
+                 .style("top", (d3.event.pageY - 28) + "px");
+      })
+     .on("mouseout", function(d) {
+          tooltip.transition()
+                 .duration(500)
+                 .style("opacity", 0);
+      });
+}
+
+// this functions makes the legends and writes the text
+function makeLegend(svg, color, width)
+{
+  var legend = svg.selectAll(".legend")
+                  .data(color.domain())
+                  .enter()
+                  .append("g")
+                  .attr("class", "legend")
+                  .attr("transform", function(d, i) {
+                         return "translate(0," + i * 20 + ")";
+                       });
+
+      legend.append("rect")
+            .attr("x", width - 18)
+            .attr("width", 18)
+            .attr("height", 18)
+            .style("fill", color)
+            .style("stroke", "black");
+
+      legend.append("text")
+            .attr("x", width - 24)
+            .attr("y", 10)
+            .attr("dy", ".35em")
+            .style("text-anchor", "end")
+            .text(function(d) { return d; });
+
+        svg.append("circle")
+           .attr("cx", width - 10)
+           .attr("cy", -10)
+           .attr("r", 8)
+           .style("fill", "black")
+           .style("stroke", "black");
+
+        svg.append("text")
+           .attr("x", width - 24)
+           .attr("y", -10)
+           .attr("dy", ".35em")
+           .style("text-anchor", "end")
+           .text("Circle size based on MSTI value");
+}
+
+// this functions updates the data based on the chosen selection
+function update(svg, response)
+{
+ d3.selectAll(".m")
+   .on("click", function()
+   {
+     var country = this.getAttribute("value");
+
+     if(country == "All"){
+       xny = formatAllData(response)
+       makeAxes(svg, xny)
+     }else if(country == "France"){
+       callFunctions(svg, response, "France")
+     }else if(country == "Germany"){
+      callFunctions(svg, response, "Germany")
+     }else if(country == "Korea"){
+         callFunctions(svg, response, "Korea")
+     }else if(country == "Netherlands"){
+         callFunctions(svg, response, "Netherlands")
+     }else if(country == "Portugal"){
+        callFunctions(svg, response, "Portugal")
+     }else{
+       callFunctions(svg, response, "United Kingdom")
+     }
+   });
+}
+
+// This function calls the necessary functions in the right order
+function callFunctions(svg, response, country)
+{
+  xny = loadData(response, country);
+  xny = formatData(xny)
+  makeAxes(svg, xny)
+}
+
+// this function loads the data into one array x and y (xny)
 function loadData(response, country)
 {
     xny = []
+    msti =  response[0]
+    indexes = getAllIndexes(msti, "2007", "2015")
+    countryIndexes = {"France" : 0, "Germany": 2, "Korea" : 4, "Netherlands" : 6,
+                      "Portugal" : 8, "United Kingdom" : 10}
+
+    start = indexes[countryIndexes[country]]
+    end = indexes[countryIndexes[country] + 1]
+    msti = msti.slice(start, end + 1)
+    xny.push(msti)
+
     consconf = response[1]
     var i = 0;
     index = consconf.findIndex(function(element)
@@ -143,66 +241,10 @@ function loadData(response, country)
     consconf = consconf.slice(index, index + 9);
     xny.push(consconf)
 
-    msti =  response[0]
-    indexes = getAllIndexes(msti, "2007", "2015")
-    countryIndexes = {"France" : 0, "Germany": 2, "Korea" : 4, "Netherlands" : 6,
-                        "Portugal" : 8, "United Kingdom" : 10}
-
-    start = indexes[countryIndexes[country]]
-    end = indexes[countryIndexes[country] + 1]
-    msti = msti.slice(start, end + 1)
-    xny.push(msti)
     return xny
 }
 
-function update(response)
-{
-  //On click, update with new data
-     d3.selectAll(".m")
-       .on("click", function()
-       {
-         var country = this.getAttribute("value");
-
-         var str;
-         if(country == "All")
-         {
-           xny = formatAllData(response)
-           makeAxes(xny)
-         }
-         else if(country == "France")
-         {
-           callFunctions(response, "France")
-         }
-         else if(country == "Germany")
-         {
-          callFunctions(response, "Germany")
-         }
-         else if(country == "Korea")
-         {
-             callFunctions(response, "Korea")
-         }
-         else if(country == "Netherlands")
-         {
-             callFunctions(response, "Netherlands")
-         }
-         else if(country == "Portugal")
-         {
-            callFunctions(response, "Portugal")
-         }
-         else
-         {
-           callFunctions(response, "United Kingdom")
-         }
-       });
-}
-
-function callFunctions(response, country)
-{
-  xny = loadData(response, country);
-  xny = formatData(xny)
-  makeAxes(xny)
-}
-
+// formats the data when a country is chosen
 function formatData(xny)
 {
   newXny = []
@@ -230,6 +272,7 @@ function formatData(xny)
   return newXny
 }
 
+// formats the data when "all" is selected
 function formatAllData(xny)
 {
   newXny = []
@@ -243,19 +286,14 @@ function formatAllData(xny)
   return newXny
 }
 
+// loops over the data to get the index of the years (2007 - 2015)
 function getAllIndexes(arr, start, end)
 {
   var indexes = [], i;
   for(i = 0; i < arr.length; i++)
   {
-      if (arr[i].time === start)
-      {
-          indexes.push(i);
-      }
-      else if (arr[i].time === end)
-      {
-          indexes.push(i);
-      }
+      if (arr[i].time === start){ indexes.push(i); }
+      else if (arr[i].time === end){ indexes.push(i); }
   }
   return indexes;
 }
