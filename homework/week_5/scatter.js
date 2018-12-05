@@ -37,7 +37,7 @@ function makeSVG()
 function makeAxes(svg, xny)
 {
   svg.selectAll("*").remove();
-  var margin = {top: 25, right: 20, bottom: 30, left: 60},
+  var margin = {top: 25, right: 60, bottom: 30, left: 60},
       width = 960 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
@@ -160,16 +160,16 @@ function makeLegend(svg, color, width)
                        });
 
       legend.append("rect")
-            .attr("x", width - 18)
+            .attr("x", width + 42)
             .attr("width", 18)
             .attr("height", 18)
             .style("fill", color)
             .style("stroke", "black");
 
       legend.append("text")
-            .attr("x", width - 24)
+            .attr("x", width + 40)
             .attr("y", 10)
-            .attr("dy", ".60em")
+            .attr("dy", ".25em")
             .style("text-anchor", "end")
             .text(function(d) { return d; });
 

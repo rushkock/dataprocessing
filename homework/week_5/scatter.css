@@ -48,7 +48,10 @@ source: https://www.w3schools.com/howto/howto_css_dropdown.asp
 /* Set position of tooltip and width of the "box" */
 .tooltip {
   position: absolute;
-  width: 200px;
-  height: 28px;
+  width: 110px;
+  height: 55px;
   pointer-events: none;
+  background-color: #fee090;
+  border-radius: 5px;
+  text-align: center;
 }
