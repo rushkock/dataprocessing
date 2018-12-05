@@ -46,7 +46,7 @@ function makeAxes(svg, xny)
 
   var y = d3.scaleLinear()
             .range([height, 0]);
-
+// source colors: http://colorbrewer2.org/#type=diverging&scheme=RdYlBu&n=3
   var color = d3.scaleOrdinal()
                 .domain(["France", "Germany", "Korea", "Netherlands", "United Kingdom"])
                 .range(["#4575b4", "#d73027", "#e0f3f8", "#fc8d59", "#fee090", "#91bfdb"]);
@@ -89,12 +89,12 @@ function makeAxes(svg, xny)
   // draw the dots and exis depending on what data was chosen
   if (xny.length > 9)
   {
-    drawDots(svg, x, y, function(d) { return color(d[1].Country)}, [10,50])
+    drawDots(svg, x, y, function(d) { return color(d[1].Country)})
     makeLegend(svg, color, width)
   }
   else
   {
-    drawDots(svg, x, y, color(xny[0][1].Country), [10,50])
+    drawDots(svg, x, y, color(xny[0][1].Country))
     var color = d3.scaleOrdinal()
               .domain([xny[0][1].Country])
               .range([countryColors[xny[0][1].Country]]);
@@ -102,7 +102,7 @@ function makeAxes(svg, xny)
   }
 }
 
-function drawDots(svg, x, y, color, domain)
+function drawDots(svg, x, y, color)
 {
   var tooltip = d3.select("body")
                   .append("div")
@@ -111,14 +111,14 @@ function drawDots(svg, x, y, color, domain)
 
   var r = d3.scaleLinear()
             .range([5, 15])
-            .domain(domain);
+            .domain([2007, 2015]);
 
   svg.selectAll(".dot")
      .data(xny)
      .enter()
      .append("circle")
      .attr("class", "dot")
-     .attr("r", function(d) { return (r(d[0].datapoint));})
+     .attr("r", function(d) { return (r(d[0].time));})
      .attr("cx", function(d) { return x(d[0].datapoint);})
      .attr("cy", function(d) { return y(d[1].datapoint);})
      .style("fill", color)
@@ -145,6 +145,11 @@ function drawDots(svg, x, y, color, domain)
 // this functions makes the legends and writes the text
 function makeLegend(svg, color, width)
 {
+  var r = d3.scaleLinear()
+            .range([2.5, 3.5])
+            .domain([2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015]);
+
+  // make legend for the countries
   var legend = svg.selectAll(".legend")
                   .data(color.domain())
                   .enter()
@@ -164,23 +169,34 @@ function makeLegend(svg, color, width)
       legend.append("text")
             .attr("x", width - 24)
             .attr("y", 10)
-            .attr("dy", ".35em")
+            .attr("dy", ".60em")
             .style("text-anchor", "end")
             .text(function(d) { return d; });
 
-        svg.append("circle")
-           .attr("cx", width - 10)
-           .attr("cy", -10)
-           .attr("r", 8)
-           .style("fill", "black")
-           .style("stroke", "black");
+      // make legend for the circle radius
+      // smaller value is a lower year, higher value is a higher year
+      var legendR = svg.selectAll(".legend1")
+                       .data(r.domain())
+                       .enter()
+                       .append("g")
+                       .attr("class", "legend1")
+                       .attr("transform", function(d, i) {
+                             return "translate(0," + i * 20 + ")";
+                           });
 
-        svg.append("text")
-           .attr("x", width - 24)
-           .attr("y", -10)
-           .attr("dy", ".35em")
-           .style("text-anchor", "end")
-           .text("Circle size based on MSTI value");
+          legendR.append("circle")
+                 .attr("cx", 13)
+                 .attr("cy", 10)
+                 .attr("r", function(d){ return r(d);} )
+                 .style("fill", "white")
+                 .style("stroke", "black");
+
+          legendR.append("text")
+                 .attr("x", 65)
+                 .attr("y", 10)
+                 .attr("dy", ".35em")
+                 .style("text-anchor", "end")
+                 .text(function(d) { return d; });
 }
 
 // this functions updates the data based on the chosen selection

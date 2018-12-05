@@ -9,6 +9,7 @@
         <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
         <script src="scatter.js"></script>
         <link rel="stylesheet" type="text/css" href="scatter.css">
+        <link rel="shortcut icon" href="favicon.ico">
 
         <title> D3 scatterplot </title>
     </head>
@@ -20,8 +21,12 @@
           the total percentage of women researchers (MSTI) from 6 different countries,
           namely France, Germany, Korea, Netherlands, Portugal and United Kingdom
       </p>
+      <a href="http://stats.oecd.org/SDMX-JSON/data/MSTI_PUB/TH_WRXRS.FRA+DEU+KOR+NLD+PRT+GBR/all?startTime=2007&endTime=2015">Source MSTI</a>
+      <br>
+      <a href="http://stats.oecd.org/SDMX-JSON/data/HH_DASH/FRA+DEU+KOR+NLD+PRT+GBR.COCONF.A/all?startTime=2007&endTime=2015">Source Consconf </a>
+      <br>
       <div class="dropdown">
-      <button class="dropbtn">Sort By Country</button>
+      <button class="dropbtn">Filter by Country</button>
         <div class="dropdown-content">
             <a class="m" value="All" href="#">All</a>
     				<a class="m" value="France" href="#">France</a>
@@ -32,5 +37,6 @@
             <a class="m" value="United Kingdom" href="#">United Kingdom</a>
         </div>
       </div>
+      <br>
     </body>
 </html>
