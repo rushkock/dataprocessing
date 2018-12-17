@@ -208,7 +208,7 @@ function makeBarChart(data, y, svgWH, tooltip)
      .attr("y", height + 35)
      .attr("x", width / 4)
      .style("font-size", "15px")
-     .text("Confidence Interval");
+     .text("Confidence Intervals");
 
   // add the y Axis
   svg.append("g")
