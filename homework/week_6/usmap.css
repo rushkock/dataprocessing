@@ -1,3 +1,7 @@
+/* Ruchella kock
+12460796
+description: contains the css for the visualizations
+ */
 .state-borders {
   fill: none;
   stroke: #fff;
@@ -13,7 +17,7 @@
   width: 110px;
   height: 55px;
   pointer-events: none;
-  background-color: #fee090;
+  background-color: #bae4bc;
   border-radius: 5px;
   text-align: center;
 }

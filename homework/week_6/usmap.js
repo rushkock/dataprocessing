@@ -1,8 +1,11 @@
 // Ruchella kock
 // 12460796
-// description
+// description: this script makes a map of the US and a bar chart with tooltips
 // Realized with help from:
-//
+// https://bl.ocks.org/mbostock/4090848
+// http://bl.ocks.org/micahstubbs/8e15870eb432a21f0bc4d3d527b2d14f
+// note: sorry didnt have enough time to optimize my code
+
 window.onload = function()
 {
   var requests = [d3.json("https://d3js.org/us-10m.v1.json"), d3.json("disorders.json")];
@@ -37,7 +40,7 @@ function makeMap(svgWH, response, states){
               .attr("width", width)
               .attr("height", height)
               .append('g')
-              .attr('class', "map")
+              .attr('class', "map");
 
   var tooltip = d3.select("body")
                   .append("div")
@@ -48,6 +51,7 @@ function makeMap(svgWH, response, states){
 
   var countryById = {};
 
+  //http://colorbrewer2.org/#type=sequential&scheme=PuBu&n=5
   var color = d3.scaleLinear()
                 .domain([15, 17, 19, 21, 23])
                 .range(["#f1eef6", "#d0d1e6", "#74a9cf", "#2b8cbe", "#045a8d"]);
@@ -107,7 +111,7 @@ function makeMap(svgWH, response, states){
       .attr("class", "state-borders")
       .attr("d", path(topojson.mesh(response[0], response[0].objects.states,
           function(a, b) { return a !== b; })));
-  makeLegend(svg, color, width)
+  makeLegend(svg, color, width);
 
 };
 
@@ -134,7 +138,7 @@ function makeLegend(svg, color, width)
       // set the color for the end
       linearGradient.append("stop")
                     .attr("offset", "100%")
-                    .attr("stop-color", "#045a8d")
+                    .attr("stop-color", "#045a8d");
 
     // draw the rectangle and fill with gradient
     svg.append("rect")
@@ -157,12 +161,12 @@ function makeLegend(svg, color, width)
     	             .domain([15, 23]);
 
     // make xAxis
-    var xAxis = d3.axisBottom(xScale)
+    var xAxis = d3.axisBottom(xScale);
 
     svg.append("g")
        .attr("class", "x axis")
        .attr("transform", "translate("+ width/3+ "," + 30 + ")")
-       .call(xAxis)
+       .call(xAxis);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -182,7 +186,7 @@ function makeSVG(classname, w, h, margin)
               .attr('class', classname)
               .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  return {"width": width, "height": height}
+  return {"width": width, "height": height};
 }
 
 function makeBarChart(data, y, svgWH, tooltip)
@@ -192,7 +196,7 @@ function makeBarChart(data, y, svgWH, tooltip)
   var processedData = processBarData(data, y, svgWH);
   var CIs = processedData[0];
   var x = processedData[1];
-  var svg = processedData[2]
+  var svg = processedData[2];
 
   // add the x Axis
   svg.append("g")
@@ -219,10 +223,10 @@ function makeBarChart(data, y, svgWH, tooltip)
      .text("Percentage");
 
      // width, height, x and y
-     function makeX(d) {return x(d[0]);}
-     function makeY(d) {return  y(d[1]);}
-     widthRect = x.bandwidth()
-     heightRect = function(d) {return height - y(d[1])}
+     function makeX(d) {return x(d[0]);};
+     function makeY(d) {return  y(d[1]);};
+     var widthRect = x.bandwidth();
+     var heightRect = function(d) {return height - y(d[1])};
 
    bars = svg.selectAll("rect");
 
@@ -322,5 +326,5 @@ function getSelectedState(d){
    states.forEach(function(e) {
      if (e.FIPS == d.id){ selectedState = e;}
    })
-   return selectedState
-}
+   return selectedState;
+};

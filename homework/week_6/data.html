@@ -1,6 +1,7 @@
-<!DOCTYPE html>
 <!-- Ruchella kock
-12460796 -->
+12460796
+description: Provides information about the data
+Realized with help from:https://getbootstrap.com/docs/4.0/components/navbar/ -->
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -17,24 +18,25 @@
           .dataInfo {
           height: 300px;
           width: 1600px;
-          background-color: #F5F5DC;
+          background-color: #bae4bc;
          }
           .paragraphs {
           text-align: center;
           height: 200px;
           width: 1000px;
+          font-size: 20px
           }
 
           .dsmImage {
             position: absolute;
-            top: 110px;
+            top: 120px;
             left: 1100px;
             width:400px;
             height:280px;
           }
           .statsImage {
             position: absolute;
-            top: 430px;
+            top: 440px;
             left: 1100px;
             width:400px;
             height:280px;
@@ -57,20 +59,21 @@
       <br>
       <br>
       <br>
-      <div style="text-align: center;">
+      <div style="text-align: center; font-size: 15px;">
         <a href="https://data.world/samhsa/any-mental-illness">Source data</a>
         <br>
       </div>
+
       <div class="dataInfo">
         <img class= "dsmImage" src="DSM-5.jpg" alt="Person reading book">
         <div class="paragraphs">
           <h1>Mental Illness percentage</h1>
           <p>
-            This data shows the percentage of adults ages 18 and older with a mental
+            This data shows the percentage of adults (ages 18 and older) with a mental
             illness in every state of the United states.
             There are many different ways to classify mental illness.
             In this data mental illness was classified using a structured clinical
-            interview for the Diagnostic and Statistical Manual of Mental Disorders—Fourth Edition(DSM-IV).
+            interview from the Diagnostic and Statistical Manual of Mental Disorders—Fourth Edition(DSM-IV).
             The data was collected between 2012 -2014.
           </p>
         </div>
@@ -89,7 +92,7 @@
               They can calculate the confidence interval to validate their hopes.
 
               This dataset uses two-sided confidence intervals. The chosen
-              confidence coefficient is 95%. We expect 95% of the population sample to fall
+              confidence coefficient is 95%. Thus, we expect 95% of the population sample to fall
               in between the upper and lower interval. That is, only 5% of the population values
               will be smaller than the lower confidence interval
               and 5% of the values will be higher than the upper confidence interval.
